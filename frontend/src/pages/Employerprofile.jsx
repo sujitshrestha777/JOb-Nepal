@@ -95,7 +95,7 @@ const EmployerProfile = () => {
               opacity: 0.5,
             }}
           >
-            {company.companyName.charAt(0)}
+            {company.companyName.charAt(0) || "p"}
           </Typography>
         </Box>
 
@@ -105,20 +105,26 @@ const EmployerProfile = () => {
             {/* Company Name and Basic Info */}
             <Box>
               <Typography variant="h3" gutterBottom>
-                {company.companyName}
+                {company.companyName || "your company name"}
               </Typography>
               <Stack direction="row" spacing={3} sx={{ mt: 2 }}>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <Business color="action" />
-                  <Typography variant="body1">{company.companyType}</Typography>
+                  <Typography variant="body1">
+                    {company.companyType || "company type"}
+                  </Typography>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <LocationOn color="action" />
-                  <Typography variant="body1">{company.location}</Typography>
+                  <Typography variant="body1">
+                    {company.location || "location of company"}
+                  </Typography>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <People color="action" />
-                  <Typography variant="body1">{company.noEmployees}</Typography>
+                  <Typography variant="body1">
+                    {company.noEmployees || "no of company employee"}
+                  </Typography>
                 </Box>
               </Stack>
             </Box>
@@ -131,7 +137,7 @@ const EmployerProfile = () => {
                 About
               </Typography>
               <Typography variant="body1" color="text.secondary">
-                {company.bio}
+                {company.bio || "company bio"}
               </Typography>
             </Box>
 
