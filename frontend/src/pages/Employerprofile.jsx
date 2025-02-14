@@ -23,7 +23,7 @@ const EmployerProfile = () => {
     bio: "",
     companyType: "",
     noEmployees: "",
-    location: " ",
+    location: "",
     companyurl: "",
     companyphotourl: "",
   });
@@ -83,9 +83,11 @@ const EmployerProfile = () => {
               top: "50%",
               left: "10%",
               transform: "translate(-50%, -50%)",
+              backgroundColor: "white",
+              opacity: 0.5,
             }}
             src={`http://localhost:5000/${company.companyphotourl}`}
-            alt={`${company.companyName} Logo`}
+            alt={`${company.companyName}. your company Logo`}
           />
           <Typography
             variant="h1"
@@ -95,7 +97,7 @@ const EmployerProfile = () => {
               opacity: 0.5,
             }}
           >
-            {company.companyName.charAt(0) || "p"}
+            {company.companyName.charAt(0) || "T"}
           </Typography>
         </Box>
 
@@ -117,7 +119,7 @@ const EmployerProfile = () => {
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <LocationOn color="action" />
                   <Typography variant="body1">
-                    {company.location || "location of company"}
+                    {company.location || "your company loaction"}
                   </Typography>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -172,19 +174,20 @@ const EmployerProfile = () => {
             </Box>
 
             {/* Company Website */}
-            {company.companyurl && (
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <WebIcon color="action" />
-                <Link
-                  href={company.companyurl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  underline="hover"
-                >
-                  Visit Company Website
-                </Link>
-              </Box>
-            )}
+
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <WebIcon color="action" />
+              <Link
+                href={company.companyurl}
+                target="_blank"
+                rel="noopener noreferrer"
+                underline="hover"
+              >
+                {company.companyurl
+                  ? "Visit Company Website"
+                  : "your website link goes here"}
+              </Link>
+            </Box>
           </Stack>
         </Box>
       </Paper>

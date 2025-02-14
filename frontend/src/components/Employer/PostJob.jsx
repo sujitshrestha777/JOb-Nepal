@@ -48,8 +48,11 @@ const PostJobModal = ({ open, onClose }) => {
       setError("Skills should be max 5");
       return;
     }
+    if (formData.salary) {
+      formData.salary = Number(formData.salary);
+    }
 
-    console.log(finalData);
+    console.log("final data for job post", finalData);
     try {
       // API call to save job data
       const response = await postJob(finalData);
@@ -65,7 +68,7 @@ const PostJobModal = ({ open, onClose }) => {
       setSuccess(null);
       setError(null);
       onClose();
-    }, 50000);
+    }, 30000);
   };
 
   return (
@@ -127,8 +130,8 @@ const PostJobModal = ({ open, onClose }) => {
           value={formData.experience}
           onChange={handleChange}
         >
-          <MenuItem value="ENTRY">Entry Level</MenuItem>
-          <MenuItem value="MID">Mid Level</MenuItem>
+          <MenuItem value="ENTRYLevel">Entry Level</MenuItem>
+          <MenuItem value="MIDLevel">Mid Level</MenuItem>
           <MenuItem value="SENIOR">Senior Level</MenuItem>
         </TextField>
         <TextField

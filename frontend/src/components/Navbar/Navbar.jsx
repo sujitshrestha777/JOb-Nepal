@@ -29,6 +29,12 @@ const Navbar = () => {
   const { role, setRole } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  const handleHomeClick = () => {
+    if (role === "USER") {
+      navigate("/");
+    }
+    navigate("/employer");
+  };
   const handleChange = (e) => {
     setSearch(e.target.value);
   };
@@ -94,7 +100,7 @@ const Navbar = () => {
             display: "flex",
             alignItems: "center",
           }}
-          onClick={() => navigate("/")}
+          onClick={handleHomeClick}
         >
           <img
             src="/logo.png"
