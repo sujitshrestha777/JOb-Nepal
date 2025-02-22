@@ -269,8 +269,14 @@ userRouter.get("/profile",authenticate, async (req, res) => {
       res.status(404).json({ message: "User not found" });
       return;
     }
+    if(user.employerProfile){
+      const jobs= await client.job.findMany({
+        where:{employerId:Number(id)}
+      })
+      res.status(200).json({ user,jobs });
+    }
 
-    res.status(200).json({ user });
+   
   } catch (error) {
     console.error("Error fetching user:", error);
     res.status(500).json({ message: "Failed to fetch user" });

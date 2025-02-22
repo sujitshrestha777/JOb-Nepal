@@ -239,7 +239,12 @@ exports.userRouter.get("/profile", auth_middleware_1.authenticate, (req, res) =>
             res.status(404).json({ message: "User not found" });
             return;
         }
-        res.status(200).json({ user });
+        if (user.employerProfile) {
+            const jobs = yield prisma_1.default.job.findMany({
+                where: { employerId: Number(id) }
+            });
+            res.status(200).json({ user, jobs });
+        }
     }
     catch (error) {
         console.error("Error fetching user:", error);
