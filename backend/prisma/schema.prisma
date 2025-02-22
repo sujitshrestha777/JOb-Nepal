@@ -47,7 +47,6 @@ model Job {
 model Application {
   id        Int       @id @default(autoincrement())
   content   String
-  resumeUrl String
   status    AppStatus @default(PENDING)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt

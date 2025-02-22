@@ -8,6 +8,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -55,9 +66,25 @@ exports.jobRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, funct
                 { boost: 'desc' },
                 { createdAt: "asc" }
             ],
-            take: 7
+            take: 7,
+            include: {
+                employer: {
+                    include: {
+                        employerProfile: {
+                            select: {
+                                companyName: true
+                            }
+                        }
+                    }
+                }
+            }
         });
-        res.status(200).json({ jobs });
+        const formattedJobs = jobs.map((_a) => {
+            var _b;
+            var { employer } = _a, job = __rest(_a, ["employer"]);
+            return (Object.assign(Object.assign({}, job), { companyName: ((_b = employer.employerProfile) === null || _b === void 0 ? void 0 : _b.companyName) || 'Unknown Company' }));
+        });
+        res.status(200).json({ jobs: formattedJobs });
     }
     catch (error) {
         console.error("Error fetching jobs:", error);

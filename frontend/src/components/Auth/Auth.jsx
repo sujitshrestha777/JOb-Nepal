@@ -56,7 +56,7 @@ const AuthModal = ({ open, onClose, isEmployer }) => {
           setSuccess(response);
           setRole(localStorage.getItem("role"));
           onClose();
-          navigate(isEmployer ? "/" : "/");
+          navigate(isEmployer ? "/employer" : "/");
         }
       } else {
         const response = await signIn({
@@ -67,7 +67,7 @@ const AuthModal = ({ open, onClose, isEmployer }) => {
           setSuccess(response);
           setRole(localStorage.getItem("role"));
           onClose();
-          navigate(isEmployer ? "/" : "/");
+          navigate(isEmployer ? "/employer" : "/");
         }
       }
       // onClose();

@@ -54,9 +54,24 @@ jobRouter.get("/", async (req, res) => {
             {boost:'desc'},
             { createdAt:"asc"}
            ],
-            take:7    
+            take:7, 
+            include:{
+              employer:{
+                include:{
+                  employerProfile:{
+                    select:{
+                      companyName:true
+                    }
+                  }
+                }
+              }
+            }   
   });
-    res.status(200).json({ jobs });
+  const formattedJobs = jobs.map(({ employer, ...job }) => ({
+    ...job,
+    companyName: employer.employerProfile?.companyName || 'Unknown Company'
+  }));
+    res.status(200).json({ jobs:formattedJobs });
   } catch (error) {
     console.error("Error fetching jobs:", error);
     res.status(500).json({ message: "Failed to fetch jobs" });

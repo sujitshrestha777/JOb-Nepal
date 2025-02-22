@@ -36,7 +36,22 @@ export default function JobDetailCard({ job }) {
           (Remote - US)
         </Typography>
         <Typography variant="subtitle1" color="text.secondary">
-          ${job.salary} • Remote
+          ${job.salary} • {job.workLocation}
+          <Typography
+            variant="subtitle1"
+            color="text.secondary"
+            onClick={() => {
+              console.log("from company name link");
+            }}
+            sx={{
+              "&:hover": {
+                textDecoration: "underline",
+                cursor: "pointer",
+              },
+            }}
+          >
+            {job.companyName}
+          </Typography>
         </Typography>
 
         {/* Apply and Save Buttons */}
