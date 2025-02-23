@@ -54,6 +54,8 @@ model Application {
   UserId    Int
   job       Job       @relation(fields: [jobId], references: [id])
   jobId     Int
+
+  @@unique([jobId, UserId], name: "userId_jobId") //for one user application to one jobpost
 }
 
 model UserProfile {

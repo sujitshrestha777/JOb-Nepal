@@ -34,17 +34,28 @@ exports.applicationRouter.post("/apply", auth_middleware_1.authenticate, (0, aut
             res.status(404).json({ message: "Jobpost not found" });
             return;
         }
-        // Create the application
-        const application = yield prisma_1.default.application.create({
-            data: {
+        const userId_jobId = yield prisma_1.default.application.upsert({
+            where: {
+                userId_jobId: {
+                    UserId: req.userId,
+                    jobId: jobId
+                }
+            },
+            update: {
+                createdAt: new Date(),
+                content: content,
+            },
+            create: {
                 jobId: Number(jobId),
                 content: content,
                 UserId: req.userId,
                 status: "PENDING",
-            },
+            }
         });
-        res.status(201).json({ message: "Application submitted successfully", application });
-        return;
+        if (userId_jobId) {
+            res.status(201).json({ message: "Application submitted successfully" });
+            return;
+        }
     }
     catch (error) {
         console.error("Error applying for job:", error);
@@ -112,31 +123,30 @@ exports.applicationRouter.put("/:id", auth_middleware_1.authenticate, (0, auth_m
     }
 }));
 // Withdraw an application (job seeker only)
-exports.applicationRouter.delete("/:id", auth_middleware_1.authenticate, (0, auth_middleware_1.authorize)("USER"), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { id } = req.params;
-    try {
-        const application = yield prisma_1.default.application.findUnique({
-            where: { id: parseInt(id) },
-        });
-        if (!application) {
-            res.status(404).json({ message: "Application not found" });
-            return;
-        }
-        // Ensure the user is the applicant
-        if (application.UserId !== req.userId) {
-            res.status(403).json({ message: "You are not authorized to withdraw this application" });
-            return;
-        }
-        yield prisma_1.default.application.delete({
-            where: { id: parseInt(id) },
-        });
-        res.status(200).json({ message: "Application withdrawn successfully" });
-    }
-    catch (error) {
-        console.error("Error withdrawing application:", error);
-        res.status(500).json({ message: "Failed to withdraw application" });
-    }
-}));
+// applicationRouter.delete("/:id", authenticate, authorize("USER"), async (req, res) => {
+//   const { id } = req.params;
+//   try {
+//     const application = await client.application.findUnique({
+//       where: { id: parseInt(id) },
+//     });
+//     if (!application) {
+//      res.status(404).json({ message: "Application not found" });
+//      return
+//     }
+//     // Ensure the user is the applicant
+//     if (application.UserId !== req.userId) {
+//        res.status(403).json({ message: "You are not authorized to withdraw this application" });
+//        return
+//     }
+//     await client.application.delete({
+//       where: { id: parseInt(id) },
+//     });
+//     res.status(200).json({ message: "Application withdrawn successfully" });
+//   } catch (error) {
+//     console.error("Error withdrawing application:", error);
+//      res.status(500).json({ message: "Failed to withdraw application" });
+//   }
+// });
 // Get all applications of that particular job
 exports.applicationRouter.get("/job/:jobId", auth_middleware_1.authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { jobId } = req.params;

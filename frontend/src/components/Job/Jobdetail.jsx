@@ -28,6 +28,7 @@ export default function JobDetailCard({ job }) {
   const [openForm, setOpenForm] = useState(false);
   const [message, setmessage] = useState("");
   const [appSuccess, setAppsuccess] = useState("");
+  const [appError, setAppError] = useState("");
   const OpenApplicationForm = () => {
     setOpenForm(true);
   };
@@ -35,23 +36,28 @@ export default function JobDetailCard({ job }) {
     setOpenForm(false);
   };
 
-  const handleAppSubmit = () => {
-    // console.log("message", message);
+  const handleAppSubmit = async () => {
+    console.log("message", message);
     try {
       const data = {
         jobId: job.id,
         content: message,
       };
-      // console.log(data);
 
-      const response = applyApplication(data);
+      const response = await applyApplication(data);
+      console.log("res", response);
+
       if (response.status === 201) {
         setAppsuccess("Applied to jobPost");
         console.log("posted application", response);
+        setTimeout(() => {
+          setAppsuccess("");
+          setOpenForm(false);
+        }, 2000);
       }
     } catch (error) {
       console.log("from the applying the job", error);
-      // setAppError(error);
+      setAppError(error);
     }
   };
   console.log(job);
@@ -126,7 +132,8 @@ export default function JobDetailCard({ job }) {
               />
             </Box>
           </DialogContent>
-
+          {appSuccess && <Alert severity="success">{appSuccess}</Alert>}
+          {appError && <Alert serverity="error">{appError}</Alert>}
           <DialogActions sx={{ p: 2 }}>
             <Button onClick={closeApplicationForm} color="error">
               Cancel
@@ -139,7 +146,6 @@ export default function JobDetailCard({ job }) {
               Submit Application
             </Button>
           </DialogActions>
-          {appSuccess && <Alert severity="success">{appSuccess}</Alert>}
         </Dialog>
         <Divider
           variant="middle"
