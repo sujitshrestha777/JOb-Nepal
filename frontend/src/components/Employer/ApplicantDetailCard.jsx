@@ -9,11 +9,13 @@ import {
   Divider,
   Link,
   Container,
+  Button,
 } from "@mui/material";
 import { LocationOn, School, Description, Email } from "@mui/icons-material";
 
-const ApplicantDetailCard = () => {
+const ApplicantDetailCard = ({ app }) => {
   // Example data - in real app, this would come from props or API
+  console.log("app in aplicantdetailCard", app);
   const profile = {
     name: "John Doe",
     bio: "Full Stack Developer with 5 years of experience in building scalable web applications",
@@ -30,14 +32,16 @@ const ApplicantDetailCard = () => {
       },
     ],
   };
+  const photoUrl = app.user?.userProfile?.photoUrl.replace(/\\/g, "/");
+  console.log(photoUrl);
 
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
+    <Container maxWidth="md" sx={{ py: 1 }}>
       <Paper elevation={3} sx={{ p: 4 }}>
         <Box sx={{ display: "flex", gap: 4, alignItems: "flex-start" }}>
           {/* Profile Image */}
           <Avatar
-            src={profile.photoUrl}
+            src={`http://localhost:5000/${photoUrl}`}
             sx={{ width: 150, height: 150 }}
             alt={profile.name}
           />
@@ -45,36 +49,39 @@ const ApplicantDetailCard = () => {
           {/* Main Info */}
           <Box sx={{ flex: 1 }}>
             <Typography variant="h4" gutterBottom>
-              {profile.name}
+              {app?.user?.name || "name"}
             </Typography>
 
             <Stack spacing={2}>
-              {profile.bio && (
-                <Typography variant="body1" color="text.secondary">
-                  {profile.bio}
-                </Typography>
-              )}
+              <Typography variant="body1" color="text.secondary">
+                {app?.user?.userProfile?.bio || profile.bio}
+              </Typography>
 
-              {profile.location && (
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <LocationOn color="action" />
-                  <Typography variant="body2">{profile.location}</Typography>
-                </Box>
-              )}
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <LocationOn color="action" />
+                <Typography variant="body2">
+                  {app.user?.userProfile?.location || profile.location}
+                </Typography>
+              </Box>
 
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <Email color="action" />
-                <Typography variant="body2">{profile.email}</Typography>
+                <Typography variant="body2">
+                  {app?.user?.email || profile.email}
+                </Typography>
               </Box>
 
-              {profile.resumeUrl && (
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <Description color="action" />
-                  <Link href={profile.resumeUrl} underline="hover">
-                    View Resume
-                  </Link>
-                </Box>
-              )}
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Description color="action" />
+                <Link
+                  href={`http://localhost:5000/${app.user.userProfile?.resumeUrl}`}
+                  underline="hover"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View Resume
+                </Link>
+              </Box>
             </Stack>
           </Box>
         </Box>
@@ -87,7 +94,7 @@ const ApplicantDetailCard = () => {
             Skills
           </Typography>
           <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-            {profile.skills.map((skill) => (
+            {app.user?.userProfile?.skills.map((skill) => (
               <Chip
                 key={skill}
                 label={skill}
@@ -99,7 +106,7 @@ const ApplicantDetailCard = () => {
         </Box>
 
         {/* Education Section */}
-        <Box>
+        <Box sx={{ position: "relative" }}>
           <Typography variant="h6" gutterBottom>
             Education
           </Typography>
@@ -110,13 +117,41 @@ const ApplicantDetailCard = () => {
             >
               <School color="action" />
               <Box>
-                <Typography variant="body1">{edu.degree}</Typography>
                 <Typography variant="body2" color="text.secondary">
-                  {edu.school} • {edu.year}
+                  {app?.user?.userProfile?.education}
                 </Typography>
               </Box>
             </Box>
           ))}
+          <Button
+            variant="contained"
+            sx={{
+              height: 40,
+              position: "absolute",
+              bottom: 0,
+              right: 100,
+              bgcolor: "#DFF5E5", // Light pastel green
+              color: "#116530", // Dark green text
+              "&:hover": { bgcolor: "#C3E8D5" }, // Slightly darker green on hover
+            }}
+          >
+            Accept
+          </Button>
+
+          <Button
+            variant="contained"
+            sx={{
+              height: 40,
+              position: "absolute",
+              bottom: 0,
+              right: 0,
+              bgcolor: "#FDE2E4", // Light pastel red (pinkish)
+              color: "#D32F2F", // Darker red text
+              "&:hover": { bgcolor: "#F8CFCF" }, // Slightly darker red on hover
+            }}
+          >
+            Reject
+          </Button>
         </Box>
       </Paper>
     </Container>

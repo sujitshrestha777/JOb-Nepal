@@ -62,29 +62,28 @@ exports.applicationRouter.post("/apply", auth_middleware_1.authenticate, (0, aut
         res.status(500).json({ message: "Failed to apply for job" });
     }
 }));
-// Get details of a specific application
-exports.applicationRouter.get("/:id", auth_middleware_1.authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { id } = req.params;
-    try {
-        const application = yield prisma_1.default.application.findUnique({
-            where: { id: parseInt(id) },
-        });
-        if (!application) {
-            res.status(404).json({ message: "Application not found" });
-            return;
-        }
-        // Ensure the user is the applicant or the employer
-        if (application.id !== req.userId && !(req.role === "EMPLOYER")) {
-            res.status(403).json({ message: "You are not authorized to view this application" });
-            return;
-        }
-        res.status(200).json({ application });
-    }
-    catch (error) {
-        console.error("Error fetching application:", error);
-        res.status(500).json({ message: "Failed to fetch application" });
-    }
-}));
+// // Get details of a specific application
+// applicationRouter.get("/:id", authenticate, async (req, res) => {
+//   const { id } = req.params;
+//   try {
+//     const application = await client.application.findUnique({
+//       where: { id: parseInt(id) },
+//     });
+//     if (!application) {
+//      res.status(404).json({ message: "Application not found" });
+//      return
+//     }
+//     // Ensure the user is the applicant or the employer
+//     if (application.id !== req.userId && !(req.role === "EMPLOYER")) {
+//        res.status(403).json({ message: "You are not authorized to view this application" });
+//        return
+//     }
+//      res.status(200).json({ application });
+//   } catch (error) {
+//     console.error("Error fetching application:", error);
+//     res.status(500).json({ message: "Failed to fetch application" });
+//   }
+// });
 // Update application status (employer only),AppStatus { PENDING ACCEPTED REJECTED}
 exports.applicationRouter.put("/:id", auth_middleware_1.authenticate, (0, auth_middleware_1.authorize)("EMPLOYER"), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
@@ -122,31 +121,43 @@ exports.applicationRouter.put("/:id", auth_middleware_1.authenticate, (0, auth_m
         res.status(500).json({ message: "Failed to update application" });
     }
 }));
-// Withdraw an application (job seeker only)
-// applicationRouter.delete("/:id", authenticate, authorize("USER"), async (req, res) => {
-//   const { id } = req.params;
-//   try {
-//     const application = await client.application.findUnique({
-//       where: { id: parseInt(id) },
-//     });
-//     if (!application) {
-//      res.status(404).json({ message: "Application not found" });
-//      return
-//     }
-//     // Ensure the user is the applicant
-//     if (application.UserId !== req.userId) {
-//        res.status(403).json({ message: "You are not authorized to withdraw this application" });
-//        return
-//     }
-//     await client.application.delete({
-//       where: { id: parseInt(id) },
-//     });
-//     res.status(200).json({ message: "Application withdrawn successfully" });
-//   } catch (error) {
-//     console.error("Error withdrawing application:", error);
-//      res.status(500).json({ message: "Failed to withdraw application" });
-//   }
-// });
+exports.applicationRouter.get("/lists", auth_middleware_1.authenticate, (0, auth_middleware_1.authorize)("EMPLOYER"), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const employerId = Number(req.userId);
+        console.log("employer:", employerId);
+        const applications = yield prisma_1.default.application.findMany({
+            where: {
+                job: {
+                    employerId: 2
+                }
+            },
+            include: {
+                user: {
+                    include: {
+                        userProfile: true
+                    }
+                },
+                job: {
+                    select: {
+                        id: true,
+                        title: true,
+                        salary: true,
+                        jobtype: true,
+                        workLocation: true
+                    }
+                }
+            },
+            orderBy: {
+                createdAt: 'desc'
+            }
+        });
+        res.status(201).json({ message: "succefully retrive the applications", applications });
+    }
+    catch (err) {
+        console.log("error from fetching application", err);
+        res.status(500).json({ message: "faild to get the applications", error: err });
+    }
+}));
 // Get all applications of that particular job
 exports.applicationRouter.get("/job/:jobId", auth_middleware_1.authenticate, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { jobId } = req.params;

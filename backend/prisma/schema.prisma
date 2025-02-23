@@ -50,7 +50,7 @@ model Application {
   status    AppStatus @default(PENDING)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  user      User      @relation(fields: [UserId], references: [id])
+  user      User      @relation(fields: [UserId], references: [id]) //jobseeker Id
   UserId    Int
   job       Job       @relation(fields: [jobId], references: [id])
   jobId     Int

@@ -5,7 +5,7 @@ import { Box } from "@mui/material";
 import EmployerSidebar from "../components/Employer/EmployerSiderbar";
 import ApplicantCardList from "../components/Employer/ApplicantCardlist";
 
-import UserProfile from "../components/Userprofile/Userprofile";
+// import UserProfile from "../components/Userprofile/Userprofile";
 // import Sidebar from "../components/Sidebar/Sidebar";
 // import ProductGrid from "../components/Product/ProductGrid";
 
@@ -27,9 +27,6 @@ const EmployerHome = () => {
         </Box>
         <Box>
           <ApplicantCardList />
-        </Box>
-        <Box>
-          <UserProfile userType="employer" />
         </Box>
       </Box>
     </Box>

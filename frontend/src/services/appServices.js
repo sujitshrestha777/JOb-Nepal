@@ -21,6 +21,27 @@ export const applyApplication = async (finalData) => {
     throw handleError(error);
   }
 };
+export const getApplications = async () => {
+  try {
+    const response = await axios.get(
+      "http://localhost:5000/api/application/lists",
+
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: localStorage.getItem("jwtToken"),
+        },
+      }
+    );
+
+    if (response.status === 201) {
+      return response;
+    }
+  } catch (error) {
+    console.log(error);
+    throw handleError(error);
+  }
+};
 
 const handleError = (error) => {
   return {
