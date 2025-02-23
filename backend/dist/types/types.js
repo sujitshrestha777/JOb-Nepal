@@ -56,7 +56,6 @@ exports.JobFilterSchema = zod_1.z.object({
 });
 exports.ApplicationSchema = zod_1.z.object({
     jobId: zod_1.z.number(),
-    resumeUrl: zod_1.z.string(),
     content: zod_1.z.string()
 });
 exports.UpdateApplicationSchema = zod_1.z.object({

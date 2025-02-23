@@ -30,13 +30,13 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
        
     } catch (error) {
         if (error instanceof jwt.JsonWebTokenError) {
-            res.status(401).json({ message: 'Invalid token' });
+            res.status(401).json({ message: 'Invalid token re login' });
             return
           } else if (error instanceof jwt.TokenExpiredError) {
-            res.status(403).json({ message: 'Token expired' });
+            res.status(403).json({ message: 'Token expired re login' });
             return
           } else {
-            res.status(500).json({ message: 'Server error' });
+            res.status(500).json({ message: 'Server error re login' });
             return
           }
     }

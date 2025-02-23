@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Card,
@@ -8,16 +8,52 @@ import {
   Chip,
   autocompleteClasses,
   Divider,
+  Dialog,
+  DialogActions,
+  TextField,
+  DialogContent,
+  DialogTitle,
+  Alert,
 } from "@mui/material";
 import TipsAndUpdatesIcon from "@mui/icons-material/TipsAndUpdates";
 import SchoolIcon from "@mui/icons-material/School";
 import WorkHistoryOutlinedIcon from "@mui/icons-material/WorkHistoryOutlined";
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
+import { applyApplication } from "../../services/appServices";
 
 // const skills = ["iOS", "Python", "Jenkins"];
 // const education = "Bachelor's degree";
 
 export default function JobDetailCard({ job }) {
+  const [openForm, setOpenForm] = useState(false);
+  const [message, setmessage] = useState("");
+  const [appSuccess, setAppsuccess] = useState("");
+  const OpenApplicationForm = () => {
+    setOpenForm(true);
+  };
+  const closeApplicationForm = () => {
+    setOpenForm(false);
+  };
+
+  const handleAppSubmit = () => {
+    // console.log("message", message);
+    try {
+      const data = {
+        jobId: job.id,
+        content: message,
+      };
+      // console.log(data);
+
+      const response = applyApplication(data);
+      if (response.status === 201) {
+        setAppsuccess("Applied to jobPost");
+        console.log("posted application", response);
+      }
+    } catch (error) {
+      console.log("from the applying the job", error);
+      // setAppError(error);
+    }
+  };
   console.log(job);
   return (
     <Card
@@ -56,11 +92,55 @@ export default function JobDetailCard({ job }) {
 
         {/* Apply and Save Buttons */}
         <Box sx={{ mt: 2, display: "flex", gap: 1 }}>
-          <Button variant="contained" color="primary">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={OpenApplicationForm}
+          >
             Apply now
           </Button>
           <Button variant="outlined">Save</Button>
         </Box>
+        <Dialog
+          open={openForm}
+          onClose={closeApplicationForm}
+          fullWidth
+          aria-labelledby="application-dialog-title"
+        >
+          <DialogTitle id="application-dialog-title">
+            Submit Job Application
+          </DialogTitle>
+
+          <DialogContent>
+            <Box component="form" sx={{ mt: 2 }}>
+              <TextField
+                fullWidth
+                multiline
+                rows={4}
+                name="message"
+                label="Cover Letter / Message"
+                value={message}
+                onChange={(e) => setmessage(e.target.value)}
+                placeholder="Write a message to the employer..."
+                sx={{ mb: 2 }}
+              />
+            </Box>
+          </DialogContent>
+
+          <DialogActions sx={{ p: 2 }}>
+            <Button onClick={closeApplicationForm} color="error">
+              Cancel
+            </Button>
+            <Button
+              onClick={handleAppSubmit}
+              variant="contained"
+              color="primary"
+            >
+              Submit Application
+            </Button>
+          </DialogActions>
+          {appSuccess && <Alert severity="success">{appSuccess}</Alert>}
+        </Dialog>
         <Divider
           variant="middle"
           sx={{ my: 3, borderBottomWidth: 2, borderColor: "#333" }}

@@ -15,7 +15,7 @@ applicationRouter.post("/apply", authenticate, authorize("USER"), async (req, re
     return
   }
 
-  const { jobId,resumeUrl,content } = parsedData.data;
+  const { jobId,content } = parsedData.data;
 
   try {
     const job = await client.job.findUnique({
@@ -32,9 +32,9 @@ applicationRouter.post("/apply", authenticate, authorize("USER"), async (req, re
       data: {
         jobId:Number(jobId),
         content:content,
-        UserId: req.userId, // Attach the job seeker's ID
-        status: "PENDING", // Default status
-        resumeUrl
+        UserId: req.userId, 
+        status: "PENDING", 
+
       },
     });
 

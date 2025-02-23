@@ -10,5 +10,5 @@ export const router=Router();
 router.use("/auth",authRouter)
 router.use("/job",jobRouter)
 router.use("/user",userRouter)
-router.use("/appilcation",applicationRouter)
+router.use("/application",applicationRouter)
 router.use("/jobSearch",jobSerachRouter)

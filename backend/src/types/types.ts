@@ -56,7 +56,6 @@ export const JobFilterSchema = z.object({
 })
 export const ApplicationSchema=z.object({
     jobId:z.number(),
-    resumeUrl:z.string(),
     content:z.string()
 })
 export const UpdateApplicationSchema=z.object({

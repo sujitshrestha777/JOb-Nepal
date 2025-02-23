@@ -25,7 +25,7 @@ exports.applicationRouter.post("/apply", auth_middleware_1.authenticate, (0, aut
         res.status(400).json({ message: "Invalid input data", errors: parsedData.error.errors });
         return;
     }
-    const { jobId, resumeUrl, content } = parsedData.data;
+    const { jobId, content } = parsedData.data;
     try {
         const job = yield prisma_1.default.job.findUnique({
             where: { id: jobId },
@@ -39,9 +39,8 @@ exports.applicationRouter.post("/apply", auth_middleware_1.authenticate, (0, aut
             data: {
                 jobId: Number(jobId),
                 content: content,
-                UserId: req.userId, // Attach the job seeker's ID
-                status: "PENDING", // Default status
-                resumeUrl
+                UserId: req.userId,
+                status: "PENDING",
             },
         });
         res.status(201).json({ message: "Application submitted successfully", application });
