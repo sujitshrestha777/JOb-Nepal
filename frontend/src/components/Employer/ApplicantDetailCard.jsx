@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Avatar,
@@ -10,12 +10,52 @@ import {
   Link,
   Container,
   Button,
+  Alert,
 } from "@mui/material";
 import { LocationOn, School, Description, Email } from "@mui/icons-material";
+import axios from "axios";
 
 const ApplicantDetailCard = ({ app }) => {
   // Example data - in real app, this would come from props or API
-  console.log("app in aplicantdetailCard", app);
+  // console.log("app in aplicantdetailCard", app);
+  const [appStatusSuccess, setAppStatusSuccess] = useState("");
+  const [appStatusError, setAppStatusError] = useState("");
+  useEffect(() => {
+    setAppStatusError("");
+    setAppStatusSuccess("");
+  }, [app]);
+  const handleAppliaction = async (status) => {
+    setAppStatusError("");
+    setAppStatusSuccess("");
+    try {
+      const data = {
+        status,
+      };
+      console.log("status", data);
+      const response = await axios.put(
+        `http://localhost:5000/api/application/${app.id}/status`,
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: localStorage.getItem("jwtToken"),
+          },
+        }
+      );
+      if (response.status === 201) {
+        console.log("response from aapliaction", response.data);
+        if (response.data.status === "ACCEPTED") {
+          setAppStatusSuccess(response.data.status);
+          return;
+        }
+        setAppStatusError("REJECTED");
+      }
+    } catch (error) {
+      console.log("error from accept/reject application", error);
+      setAppStatusError(error);
+    }
+  };
+
   const profile = {
     name: "John Doe",
     bio: "Full Stack Developer with 5 years of experience in building scalable web applications",
@@ -74,7 +114,10 @@ const ApplicantDetailCard = ({ app }) => {
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <Description color="action" />
                 <Link
-                  href={`http://localhost:5000/${app.user.userProfile?.resumeUrl}`}
+                  href={
+                    `http://localhost:5000/${app.user?.userProfile?.resumeUrl}` ||
+                    ""
+                  }
                   underline="hover"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -134,6 +177,9 @@ const ApplicantDetailCard = ({ app }) => {
               color: "#116530", // Dark green text
               "&:hover": { bgcolor: "#C3E8D5" }, // Slightly darker green on hover
             }}
+            onClick={() => {
+              handleAppliaction("ACCEPTED");
+            }}
           >
             Accept
           </Button>
@@ -149,10 +195,17 @@ const ApplicantDetailCard = ({ app }) => {
               color: "#D32F2F", // Darker red text
               "&:hover": { bgcolor: "#F8CFCF" }, // Slightly darker red on hover
             }}
+            onClick={() => {
+              handleAppliaction("REJECTED");
+            }}
           >
             Reject
           </Button>
         </Box>
+        {appStatusSuccess && (
+          <Alert severity="success">{appStatusSuccess}</Alert>
+        )}
+        {appStatusError && <Alert severity="error">{appStatusError}</Alert>}
       </Paper>
     </Container>
   );

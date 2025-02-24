@@ -132,7 +132,7 @@ applicationRouter.get("/lists",authenticate,authorize("EMPLOYER"),async(req,res)
           const applications = await client.application.findMany({
               where: {
                   job: {
-                      employerId:2
+                      employerId
                   }
               },
               include: {
@@ -189,4 +189,40 @@ applicationRouter.get("/job/:jobId", authenticate, async (req, res) => {
       res.status(500).json({ message: "Failed to fetch applications" });
     }
   });
-  
+
+//rejected or accepted of appliaction
+applicationRouter.put("/:id/status",authenticate,authorize("EMPLOYER"),async(req,res)=>{
+  const id=req.params.id;
+  const {status}=req.body;
+  if(!(status==="ACCEPTED"||status==="REJECTED")){
+    res.status(401).json({message:"no status(rejected/accepted) is provided"});
+    return
+  }
+  try {
+    const postOwner=await client.application.findFirst({
+      where:{
+        id:Number(id),
+        job:{
+          employerId:req.userId
+        }
+      },
+    })
+   if(postOwner){
+    const response=await client.application.update({
+      where:{
+        id:Number(id)
+      },
+      data:{
+        status,
+        updatedAt:new Date()
+      }
+    })
+  }else{
+    res.status(401).json({message:"not authorized "});
+    return
+  }
+  res.status(201).json({message:"successfully status updated",status:status })
+  } catch (error) {
+    res.status(500).json({message:"server error",error})
+  }
+})

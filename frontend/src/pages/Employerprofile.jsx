@@ -15,6 +15,7 @@ import {
   People,
 } from "@mui/icons-material";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 
 const EmployerProfile = () => {
   // Example data - in real app, this would come from props or API
@@ -27,8 +28,29 @@ const EmployerProfile = () => {
     companyurl: "",
     companyphotourl: "",
   });
-
+  const { id } = useParams();
   useEffect(() => {
+    const fetchEmployerProfileId = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/api/user/profile/${id}`
+        );
+        if (response.status === 200) {
+          const profileData = {
+            ...response.data.user.employerProfile,
+            companyphotourl:
+              response.data.user.employerProfile.companyphotourl.replace(
+                /\\/g,
+                "/"
+              ),
+          };
+          setCompany(profileData);
+          console.log(profileData);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
     const fetchEmployerProfile = async () => {
       try {
         const response = await axios.get(
@@ -55,8 +77,12 @@ const EmployerProfile = () => {
         console.error(error);
       }
     };
+    if (id) {
+      fetchEmployerProfileId();
+      return;
+    }
     fetchEmployerProfile();
-  }, []);
+  }, [id]);
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>

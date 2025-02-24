@@ -11,12 +11,14 @@ import {
   Button,
   Menu,
   MenuItem,
+  Stack,
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import SearchIcon from "@mui/icons-material/Search";
 import AuthModal from "../Auth/Auth";
 import { useNavigate } from "react-router-dom";
 import { AuthContext, SearchContext } from "../../context/Context";
+import axios from "axios";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -25,8 +27,10 @@ const Navbar = () => {
   const [logEmployeer, setlogEmployeer] = useState(false);
   const [logJobseeker, setlogJobseeker] = useState(false);
   const [search, setSearch] = useState("");
+  const [notifications, setNotifications] = useState([]);
   const { setSearchQuery } = useContext(SearchContext);
   const { role, setRole } = useContext(AuthContext);
+
   const navigate = useNavigate();
 
   const handleHomeClick = () => {
@@ -52,9 +56,23 @@ const Navbar = () => {
     setAnchorEl(null);
   };
 
-  const handleOpenNotification = (event) => {
-    console.log(event.currentTarget);
+  const handleOpenNotification = async (event) => {
     setAnchorEl(event.currentTarget);
+    try {
+      const notificationsRes = await axios.get(
+        "http://localhost:5000/api/notification/lists",
+        {
+          headers: {
+            "Content-Type": "applicaion/json",
+            Authorization: localStorage.getItem("jwtToken"),
+          },
+        }
+      );
+      if (notificationsRes.status === 201) {
+        console.log("notification data", notificationsRes.data.appResult);
+        setNotifications(notificationsRes.data.appResult);
+      }
+    } catch (error) {}
   };
   useEffect(() => {
     const Role = localStorage.getItem("role");
@@ -211,21 +229,33 @@ const Navbar = () => {
               horizontal: "right",
             }}
             PaperProps={{
-              sx: { p: 2, width: 250, mt: 1, borderRadius: 2 },
+              sx: { p: 2, width: 400, mt: 1, borderRadius: 2 },
             }}
             MenuListProps={{
               "aria-labelledby": "basic-button",
             }}
           >
-            <MenuItem>
-              <Typography variant="body1">Notification 1</Typography>
-            </MenuItem>
-            <MenuItem>
-              <Typography variant="body1">Notification 2</Typography>
-            </MenuItem>
-            <MenuItem>
-              <Typography variant="body1">Notification 3</Typography>
-            </MenuItem>
+            {notifications.map((noti, index) => (
+              <MenuItem
+                key={index}
+                sx={{ display: "flex", direction: "column" }}
+                onClick={() => {
+                  navigate(
+                    `/Employer-profile/${noti.job.employer.employerProfile.id}`
+                  );
+                }}
+              >
+                <Stack direction="column" spacing={1}>
+                  <Typography variant="h6">
+                    You have been {noti.status}
+                  </Typography>
+                  <Typography variant="body6">
+                    for {noti.job.title} at{" "}
+                    {noti.job.employer.employerProfile.companyName}
+                  </Typography>
+                </Stack>
+              </MenuItem>
+            ))}
           </Menu>
         </Box>
       </Toolbar>

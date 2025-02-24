@@ -42,7 +42,7 @@ import ApplicantDetailCard from "./ApplicantDetailCard";
 //   },
 // ];
 
-function ApplicantCard({ app, onSelectApp }) {
+function ApplicantCard({ app, onSelectApp, reset }) {
   return (
     <Card
       sx={{
@@ -55,6 +55,7 @@ function ApplicantCard({ app, onSelectApp }) {
       }}
       onClick={() => {
         onSelectApp(app);
+        reset();
       }}
     >
       <CardContent>
@@ -78,6 +79,7 @@ function ApplicantCard({ app, onSelectApp }) {
 export default function ApplicantCardList() {
   const [applications, setApplication] = useState([{}]);
   const [selectedApp, setSelectedApp] = useState({});
+  const [resetStatus, setresetStatus] = useState(false);
   useEffect(() => {
     const fetchApplicants = async () => {
       try {
@@ -104,6 +106,9 @@ export default function ApplicantCardList() {
                 onSelectApp={(app) => {
                   setSelectedApp(app);
                 }}
+                reset={() => {
+                  setresetStatus(true);
+                }}
               />
             </Grid>
           ))}
@@ -111,7 +116,7 @@ export default function ApplicantCardList() {
       </Box>
 
       <Box sx={{ width: "800px" }}>
-        <ApplicantDetailCard app={selectedApp} />
+        <ApplicantDetailCard app={selectedApp} reset={resetStatus} />
       </Box>
     </Box>
   );

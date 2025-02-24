@@ -128,7 +128,7 @@ exports.applicationRouter.get("/lists", auth_middleware_1.authenticate, (0, auth
         const applications = yield prisma_1.default.application.findMany({
             where: {
                 job: {
-                    employerId: 2
+                    employerId
                 }
             },
             include: {
@@ -184,5 +184,43 @@ exports.applicationRouter.get("/job/:jobId", auth_middleware_1.authenticate, (re
     catch (error) {
         console.error("Error fetching applications:", error);
         res.status(500).json({ message: "Failed to fetch applications" });
+    }
+}));
+//rejected or accepted of appliaction
+exports.applicationRouter.put("/:id/status", auth_middleware_1.authenticate, (0, auth_middleware_1.authorize)("EMPLOYER"), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.params.id;
+    const { status } = req.body;
+    if (!(status === "ACCEPTED" || status === "REJECTED")) {
+        res.status(401).json({ message: "no status(rejected/accepted) is provided" });
+        return;
+    }
+    try {
+        const postOwner = yield prisma_1.default.application.findFirst({
+            where: {
+                id: Number(id),
+                job: {
+                    employerId: req.userId
+                }
+            },
+        });
+        if (postOwner) {
+            const response = yield prisma_1.default.application.update({
+                where: {
+                    id: Number(id)
+                },
+                data: {
+                    status,
+                    updatedAt: new Date()
+                }
+            });
+        }
+        else {
+            res.status(401).json({ message: "not authorized " });
+            return;
+        }
+        res.status(201).json({ message: "successfully status updated", status: status });
+    }
+    catch (error) {
+        res.status(500).json({ message: "server error", error });
     }
 }));
