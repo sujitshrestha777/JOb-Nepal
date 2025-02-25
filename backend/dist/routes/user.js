@@ -25,12 +25,8 @@ exports.userRouter = (0, express_1.Router)();
 exports.userRouter.get("/profile/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     try {
-        const user = yield prisma_1.default.user.findUnique({
+        const user = yield prisma_1.default.employerProfile.findUnique({
             where: { id: parseInt(id) },
-            include: {
-                userProfile: true, // Include user profile details if available
-                employerProfile: true, // Include employer profile details if available
-            },
         });
         if (!user) {
             res.status(404).json({ message: "User not found" });

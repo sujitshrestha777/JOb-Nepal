@@ -12,12 +12,9 @@ export const userRouter=Router()
 userRouter.get("/profile/:id", async (req, res) => {
     const { id } = req.params;
     try {
-      const user = await client.user.findUnique({
+      const user = await client.employerProfile.findUnique({
         where: { id: parseInt(id) },
-        include: {
-          userProfile: true, // Include user profile details if available
-          employerProfile: true, // Include employer profile details if available
-        },
+        
       });
   
       if (!user) {

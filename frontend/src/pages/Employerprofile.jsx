@@ -37,15 +37,14 @@ const EmployerProfile = () => {
         );
         if (response.status === 200) {
           const profileData = {
-            ...response.data.user.employerProfile,
-            companyphotourl:
-              response.data.user.employerProfile.companyphotourl.replace(
-                /\\/g,
-                "/"
-              ),
+            ...response.data.user,
+            companyphotourl: response.data.user.companyphotourl.replace(
+              /\\/g,
+              "/"
+            ),
           };
           setCompany(profileData);
-          console.log(profileData);
+          console.log("from id part", profileData);
         }
       } catch (error) {
         console.error(error);
